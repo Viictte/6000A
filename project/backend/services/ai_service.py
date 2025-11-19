@@ -12,8 +12,8 @@ class AIService:
         self.api_key = Config.DASHSCOPE_API_KEY
         self.api_url = Config.DASHSCOPE_TEXT_API
 
-    def generate_tutorial_steps(self, topic, age_group):
-        """Generate tutorial steps in English"""
+    def generate_tutorial_steps(self, topic, age_group, character_description=None):
+        """Generate tutorial steps in English with optional custom character"""
         age_config = Config.AGE_GROUPS[age_group]
         words_per_step = age_config['words_per_step']
 
@@ -60,22 +60,25 @@ class AIService:
                         structured_steps = self._parse_legacy_steps(content)
 
                     if structured_steps:
-                        character_description = self._generate_character_description(
-                            age_group, character_profile)
+                        if character_description:
+                            final_character_description = character_description
+                        else:
+                            final_character_description = self._generate_character_description(
+                                age_group, character_profile)
 
                         for i, step in enumerate(structured_steps):
-                            step['character_description'] = character_description
+                            step['character_description'] = final_character_description
                             if not step.get('action_scene'):
                                 step['action_scene'] = self._generate_action_scene(step, topic, i)
 
                         return structured_steps
 
             print(f"API call failed: {response.status_code}, {response.text}")
-            return self._get_fallback_steps(topic)
+            return self._get_fallback_steps(topic, character_description)
 
         except Exception as e:
             print(f"AI service error: {e}")
-            return self._get_fallback_steps(topic)
+            return self._get_fallback_steps(topic, character_description)
 
     def _parse_structured_response(self, content):
         """Parse JSON-like structured output"""
@@ -402,31 +405,32 @@ Keep it appropriate for children's comics. Return a concise description suitable
         """Default character description when selfie analysis fails"""
         return "A cute cartoon child character with big expressive eyes, friendly smile, wearing casual t-shirt and shorts, child-friendly art style"
 
-    def _get_fallback_steps(self, topic):
+    def _get_fallback_steps(self, topic, character_description=None):
         """Fallback steps in English"""
+        default_char = character_description or 'A cute cartoon child with big eyes, casual clothes'
         return [
             {
                 'title': ' Get Ready',
                 'description': f"Let's learn about {topic}!",
-                'character_description': 'A cute cartoon child with big eyes, casual clothes',
+                'character_description': default_char,
                 'action_scene': 'standing confidently, holding items, ready to start'
             },
             {
                 'title': ' Step One',
                 'description': 'Follow the instructions to begin',
-                'character_description': 'A cute cartoon child with big eyes, casual clothes',
+                'character_description': default_char,
                 'action_scene': 'starting the action, hands in motion, focused'
             },
             {
                 'title': ' Keep Going',
                 'description': 'Great! Continue to the next step',
-                'character_description': 'A cute cartoon child with big eyes, casual clothes',
+                'character_description': default_char,
                 'action_scene': 'performing the task, active movement'
             },
             {
                 'title': ' All Done',
                 'description': 'Awesome! You did it!',
-                'character_description': 'A cute cartoon child with big eyes, casual clothes',
+                'character_description': default_char,
                 'action_scene': 'celebrating, big smile, thumbs up'
             }
         ]

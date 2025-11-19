@@ -485,6 +485,13 @@ button:disabled {
     color: #2d1f4e;
 }
 
+.mission-card > header > p {
+    color: #4a4a68;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 8px 0;
+}
+
 .mission-meta {
     color: #6d6d82;
     font-size: 0.9rem;
@@ -737,6 +744,10 @@ button:disabled {
     justify-content: center;
     z-index: 1000;
     animation: fadeIn 0.3s ease;
+}
+
+.modal.hidden {
+    display: none !important;
 }
 
 @keyframes fadeIn {

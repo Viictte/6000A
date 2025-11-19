@@ -1,57 +1,58 @@
 [
   {
-    "id": "creative-citizen",
-    "title": "Creative Citizen Starter",
-    "description": "Build everyday habits through playful, story-driven activities.",
+    "id": "what-is-ai",
+    "title": "What is AI?",
+    "description": "Discover how artificial intelligence works and where we see it every day.",
     "recommended_age": "6-8",
-    "badge": "🛠️",
+    "badge": "🤖",
     "topics": [
-      {"id": "morning-routine", "title": "Morning Routine Master", "goal": "Build a calm, confident start to the day."},
-      {"id": "kindness-cards", "title": "Kindness Cards", "goal": "Practice empathy by designing mini kindness missions."},
-      {"id": "community-helper", "title": "Community Helper", "goal": "Learn how to spot needs at home and help out."}
+      {"id": "what-does-ai-mean", "title": "What does AI mean?", "goal": "Learn the basic definition of artificial intelligence."},
+      {"id": "how-ai-learns", "title": "How AI learns from data", "goal": "Understand how AI gets smarter by learning from examples."},
+      {"id": "ai-in-daily-life", "title": "Where we see AI every day", "goal": "Discover AI in phones, games, and smart devices."},
+      {"id": "ai-safety", "title": "Being safe and fair with AI", "goal": "Learn how to use AI responsibly and kindly."}
     ],
     "unlock_dares": [
-      {"id": "dare-1", "title": "Adventure at the Park", "description": "Parent takes kid to explore a new park or playground", "unlock_after": 3},
-      {"id": "dare-2", "title": "Ice Cream Party", "description": "Parent treats the family to ice cream at favorite shop", "unlock_after": 6},
-      {"id": "dare-3", "title": "Movie Night", "description": "Parent organizes a special movie night with popcorn and snacks", "unlock_after": 9}
+      {"id": "dare-1", "title": "Tech Museum Visit", "description": "Parent takes kid to explore a science or technology museum", "unlock_after": 3},
+      {"id": "dare-2", "title": "Build a Simple Robot", "description": "Parent helps kid build a simple robot or coding project", "unlock_after": 6},
+      {"id": "dare-3", "title": "AI Movie Night", "description": "Parent organizes movie night with AI-themed films like WALL-E", "unlock_after": 9}
     ]
   },
   {
-    "id": "space-adventurer",
-    "title": "Space Adventurer",
-    "description": "Launch from planet basics to future astronaut challenges.",
+    "id": "how-my-body-works",
+    "title": "How my body works",
+    "description": "Learn amazing facts about how your body grows, heals, and stays healthy.",
     "recommended_age": "8-10",
-    "badge": "🚀",
+    "badge": "💪",
     "topics": [
-      {"id": "meet-the-planets", "title": "Meet the Planets", "goal": "Learn fun facts about every planet."},
-      {"id": "mission-control", "title": "Mission Control", "goal": "Understand how astronauts prepare for launch."},
-      {"id": "gravity-games", "title": "Gravity Games", "goal": "Experiment with gravity at home."},
-      {"id": "future-bases", "title": "Future Bases", "goal": "Design your own moon or Mars base."}
+      {"id": "cells-and-organs", "title": "Cells and organs", "goal": "Discover the tiny building blocks that make up your body."},
+      {"id": "food-to-energy", "title": "How food becomes energy", "goal": "Learn how your body turns food into power for playing and thinking."},
+      {"id": "immune-system", "title": "How the immune system protects us", "goal": "Understand how your body fights off germs and stays healthy."},
+      {"id": "healing-and-growth", "title": "How we heal and grow", "goal": "Learn how cuts heal and how you grow taller every year."}
     ],
     "unlock_dares": [
-      {"id": "dare-4", "title": "Planetarium Visit", "description": "Parent takes kid to visit a planetarium or science museum", "unlock_after": 3},
-      {"id": "dare-5", "title": "Stargazing Night", "description": "Parent organizes a backyard stargazing session with telescope", "unlock_after": 6},
-      {"id": "dare-6", "title": "Space Movie Marathon", "description": "Parent hosts a space-themed movie marathon with astronaut snacks", "unlock_after": 9},
-      {"id": "dare-7", "title": "Build a Rocket", "description": "Parent helps kid build and launch a model rocket together", "unlock_after": 12}
+      {"id": "dare-4", "title": "Healthy Cooking Day", "description": "Parent and kid cook a nutritious meal together", "unlock_after": 3},
+      {"id": "dare-5", "title": "Sports Adventure", "description": "Parent takes kid to try a new sport or physical activity", "unlock_after": 6},
+      {"id": "dare-6", "title": "Doctor Visit Q&A", "description": "Parent arranges a fun Q&A with a doctor or nurse about the body", "unlock_after": 9},
+      {"id": "dare-7", "title": "Science Experiment Day", "description": "Parent helps kid do body-related science experiments at home", "unlock_after": 12}
     ]
   },
   {
-    "id": "storyteller-track",
-    "title": "Storyteller Track",
-    "description": "Go from idea sparks to polished mini comics.",
+    "id": "internet-and-privacy",
+    "title": "Internet and privacy",
+    "description": "Understand how the internet works and how to stay safe online.",
     "recommended_age": "9-12",
-    "badge": "📚",
+    "badge": "🌐",
     "topics": [
-      {"id": "idea-mashups", "title": "Idea Mashups", "goal": "Brainstorm creative prompts using mashup games."},
-      {"id": "hero-lab", "title": "Hero Lab", "goal": "Develop characters with strengths, flaws, and sidekicks."},
-      {"id": "panel-pacing", "title": "Panel Pacing", "goal": "Plan exciting panels and cliffhangers."},
-      {"id": "final-showcase", "title": "Final Showcase", "goal": "Publish a mini comic or zine."}
+      {"id": "what-is-internet", "title": "What the internet is", "goal": "Learn how computers connect and share information worldwide."},
+      {"id": "what-is-data", "title": "What data is", "goal": "Understand what information means and how it travels online."},
+      {"id": "staying-safe-online", "title": "Being safe online", "goal": "Learn how to protect yourself and be kind on the internet."},
+      {"id": "what-is-privacy", "title": "What privacy means", "goal": "Discover why keeping some things private is important."}
     ],
     "unlock_dares": [
-      {"id": "dare-8", "title": "Bookstore Adventure", "description": "Parent takes kid to bookstore and lets them pick 3 new books", "unlock_after": 3},
-      {"id": "dare-9", "title": "Comic Convention", "description": "Parent takes kid to a local comic convention or book fair", "unlock_after": 6},
-      {"id": "dare-10", "title": "Author Meet & Greet", "description": "Parent arranges visit to library author event or writing workshop", "unlock_after": 9},
-      {"id": "dare-11", "title": "Publishing Party", "description": "Parent hosts a comic showcase party where kid presents their work", "unlock_after": 12}
+      {"id": "dare-8", "title": "Family Digital Rules", "description": "Parent and kid create family internet safety rules together", "unlock_after": 3},
+      {"id": "dare-9", "title": "Coding Workshop", "description": "Parent takes kid to a coding or computer workshop", "unlock_after": 6},
+      {"id": "dare-10", "title": "Create a Website", "description": "Parent helps kid create their first simple website or blog", "unlock_after": 9},
+      {"id": "dare-11", "title": "Cybersecurity Game Night", "description": "Parent organizes game night with online safety board games", "unlock_after": 12}
     ]
   }
 ]
