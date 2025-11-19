@@ -739,6 +739,10 @@ button:disabled {
     animation: fadeIn 0.3s ease;
 }
 
+.modal.hidden {
+    display: none !important;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;

@@ -43,18 +43,40 @@ class StorySparkApp {
 
         const viewNotificationsBtn = document.getElementById('viewNotificationsBtn');
         const closeNotificationModal = document.getElementById('closeNotificationModal');
+        const notificationModal = document.getElementById('notificationModal');
         
         if (viewNotificationsBtn) {
             viewNotificationsBtn.addEventListener('click', () => this.showNotificationModal());
         }
         
         if (closeNotificationModal) {
-            closeNotificationModal.addEventListener('click', () => this.hideNotificationModal());
+            closeNotificationModal.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.hideNotificationModal();
+            });
         }
+
+        if (notificationModal) {
+            notificationModal.addEventListener('click', (e) => {
+                if (e.target === notificationModal) {
+                    this.hideNotificationModal();
+                }
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('notificationModal');
+                if (modal && !modal.classList.contains('hidden')) {
+                    this.hideNotificationModal();
+                }
+            }
+        });
 
         const notificationTabs = document.querySelectorAll('.tab-btn');
         notificationTabs.forEach(tab => {
-            tab.addEventListener('click', (e) => this.switchNotificationTab(e.target.dataset.tab));
+            tab.addEventListener('click', (e) => this.switchNotificationTab(e.target.dataset.tab, e));
         });
     }
     
@@ -789,10 +811,10 @@ class StorySparkApp {
         modal.classList.add('hidden');
     }
 
-    switchNotificationTab(tab) {
+    switchNotificationTab(tab, e) {
         const tabs = document.querySelectorAll('.tab-btn');
         tabs.forEach(t => t.classList.remove('active'));
-        event.target.classList.add('active');
+        e.currentTarget.classList.add('active');
         this.loadNotifications(tab);
     }
 
