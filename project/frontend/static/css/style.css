@@ -1,0 +1,597 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', 'Microsoft YaHei', sans-serif;
+    line-height: 1.6;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: white;
+}
+
+header h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+header p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.input-section {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+
+.input-section h2 {
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+input[type="text"], select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus, select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.result-section {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.result-section h2 {
+    color: #333;
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 2rem;
+}
+
+/* Comic display area */
+#comicDisplay {
+    margin-bottom: 30px;
+}
+
+.comic-hero {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    align-items: center;
+    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+    padding: 24px;
+    border-radius: 18px;
+}
+
+.hero-media {
+    background: white;
+    border-radius: 16px;
+    padding: 12px;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.15);
+}
+
+.hero-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.hero-kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.85rem;
+    color: #764ba2;
+}
+
+.hero-title {
+    font-size: 2rem;
+    color: #2d1f4e;
+}
+
+.hero-meta {
+    color: #6c6c80;
+    font-weight: 600;
+}
+
+.hero-summary {
+    font-size: 1rem;
+    color: #4a4a68;
+}
+
+.hero-highlights {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: #5a5a75;
+}
+
+.hero-highlights li::before {
+    content: '★';
+    color: #ffb347;
+    margin-right: 8px;
+}
+
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.btn {
+    border: none;
+    border-radius: 999px;
+    padding: 12px 24px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    width: auto;
+}
+
+.btn.primary {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    box-shadow: 0 10px 20px rgba(118, 75, 162, 0.3);
+}
+
+.btn.ghost {
+    background: white;
+    color: #764ba2;
+    border: 1px solid #d6c7f7;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.hero-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 240px;
+    border-radius: 16px;
+    background: repeating-linear-gradient(45deg, #f2f2f7, #f2f2f7 10px, #ffffff 10px, #ffffff 20px);
+    color: #7a7a9a;
+    font-weight: 600;
+}
+
+.story-timeline {
+    display: flex;
+    gap: 12px;
+    margin: 24px 0 10px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+.story-timeline::-webkit-scrollbar {
+    height: 8px;
+}
+
+.story-timeline::-webkit-scrollbar-thumb {
+    background: #c3b5f4;
+    border-radius: 999px;
+}
+
+.timeline-node {
+    flex: 0 0 auto;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #ede9ff;
+    padding: 12px 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    min-width: 140px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.timeline-node.active {
+    border-color: #764ba2;
+    box-shadow: 0 10px 20px rgba(118, 75, 162, 0.15);
+}
+
+.node-index {
+    background: #f1edff;
+    color: #764ba2;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+}
+
+.node-title {
+    font-size: 0.95rem;
+    color: #3d3d57;
+}
+
+/* Step cards layout */
+#stepsDisplay {
+    margin-top: 20px;
+}
+
+#stepsDisplay.carousel-view {
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+#stepsDisplay.carousel-view .step-cards-track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(280px, 320px);
+    gap: 20px;
+}
+
+#stepsDisplay.grid-view .step-cards-track {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px;
+}
+
+.step-cards-track {
+    scroll-snap-type: x proximity;
+}
+
+.empty-storyboard {
+    padding: 30px;
+    text-align: center;
+    color: #6b6b88;
+}
+
+.step-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.step-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.step-card {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-height: 100%;
+}
+
+.step-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #f6f4ff;
+    border-radius: 999px;
+    padding: 6px 12px;
+    width: fit-content;
+    font-weight: bold;
+    color: #5c45c6;
+}
+
+.step-mood {
+    font-size: 1.1rem;
+}
+
+.step-number-label {
+    font-size: 0.9rem;
+}
+
+/* Step number circle */
+/* Deprecated step number style removed in favor of pill */
+
+/* Step title and icon */
+.step-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2b2354;
+}
+
+.step-action {
+    font-size: 0.95rem;
+    color: #6b6b88;
+    font-style: italic;
+}
+
+/* Image container */
+.step-image-container {
+    width: 100%;
+    height: 250px;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.step-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Loading placeholder */
+.image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(45deg, #f3f4f6 25%, transparent 25%, transparent 75%, #f3f4f6 75%, #f3f4f6),
+                linear-gradient(45deg, #f3f4f6 25%, transparent 25%, transparent 75%, #f3f4f6 75%, #f3f4f6);
+    background-size: 20px 20px;
+    background-position: 0 0, 10px 10px;
+    color: #999;
+    font-size: 0.9rem;
+}
+
+/* Step description */
+.step-description {
+    padding: 20px;
+    color: #555;
+    line-height: 1.8;
+    font-size: 1rem;
+    text-align: left;
+}
+
+/* Hidden class */
+.hidden {
+    display: none;
+}
+
+/* Missions */
+.missions-section {
+    margin: 30px 0;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.missions-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.section-kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-size: 0.85rem;
+    color: #764ba2;
+    margin-bottom: 4px;
+}
+
+.section-subtitle {
+    color: #4a4a68;
+    margin-top: 4px;
+}
+
+.missions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+.mission-card {
+    border: 1px solid #efe8ff;
+    border-radius: 18px;
+    padding: 20px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 4px 12px rgba(118, 75, 162, 0.12);
+}
+
+.mission-card h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: #2d1f4e;
+}
+
+.mission-meta {
+    color: #6d6d82;
+    font-size: 0.9rem;
+}
+
+.mission-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.progress-track {
+    height: 10px;
+    border-radius: 999px;
+    background: #f0eafe;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    transition: width 0.3s ease;
+}
+
+.mission-topics {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.mission-topic {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+    padding: 6px 10px;
+    border-radius: 10px;
+    background: #f8f6ff;
+}
+
+.mission-topic.completed {
+    background: #e6fff1;
+    color: #1f8357;
+}
+
+.mission-next-topic {
+    font-size: 0.95rem;
+    color: #4a4a68;
+}
+
+.mission-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.mission-empty {
+    text-align: center;
+    color: #5a5a75;
+    padding: 20px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    .input-section {
+        padding: 20px;
+    }
+    
+    .step-image-container {
+        height: 200px;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .missions-section {
+        padding: 20px;
+    }
+
+    .missions-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    #stepsDisplay.carousel-view .step-cards-track {
+        grid-auto-columns: minmax(240px, 80%);
+    }
+}
+
+/* Full comic image styles (if displaying stitched large image) */
+.full-comic-image {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    margin: 20px 0;
+}

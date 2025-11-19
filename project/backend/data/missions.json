@@ -1,0 +1,40 @@
+[
+  {
+    "id": "creative-citizen",
+    "title": "Creative Citizen Starter",
+    "description": "Build everyday habits through playful, story-driven activities.",
+    "recommended_age": "6-8",
+    "badge": "🛠️",
+    "topics": [
+      {"id": "morning-routine", "title": "Morning Routine Master", "goal": "Build a calm, confident start to the day."},
+      {"id": "kindness-cards", "title": "Kindness Cards", "goal": "Practice empathy by designing mini kindness missions."},
+      {"id": "community-helper", "title": "Community Helper", "goal": "Learn how to spot needs at home and help out."}
+    ]
+  },
+  {
+    "id": "space-adventurer",
+    "title": "Space Adventurer",
+    "description": "Launch from planet basics to future astronaut challenges.",
+    "recommended_age": "8-10",
+    "badge": "🚀",
+    "topics": [
+      {"id": "meet-the-planets", "title": "Meet the Planets", "goal": "Learn fun facts about every planet."},
+      {"id": "mission-control", "title": "Mission Control", "goal": "Understand how astronauts prepare for launch."},
+      {"id": "gravity-games", "title": "Gravity Games", "goal": "Experiment with gravity at home."},
+      {"id": "future-bases", "title": "Future Bases", "goal": "Design your own moon or Mars base."}
+    ]
+  },
+  {
+    "id": "storyteller-track",
+    "title": "Storyteller Track",
+    "description": "Go from idea sparks to polished mini comics.",
+    "recommended_age": "9-12",
+    "badge": "📚",
+    "topics": [
+      {"id": "idea-mashups", "title": "Idea Mashups", "goal": "Brainstorm creative prompts using mashup games."},
+      {"id": "hero-lab", "title": "Hero Lab", "goal": "Develop characters with strengths, flaws, and sidekicks."},
+      {"id": "panel-pacing", "title": "Panel Pacing", "goal": "Plan exciting panels and cliffhangers."},
+      {"id": "final-showcase", "title": "Final Showcase", "goal": "Publish a mini comic or zine."}
+    ]
+  }
+]

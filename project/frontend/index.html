@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StorySpark - AI Tutorial Comic Generator</title>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>StorySpark</h1>
+            <p>AI-Powered Tutorial Comic Generator for Children</p>
+        </header>
+        
+        <main>
+            <div class="input-section">
+                <h2>Create Your Tutorial Comic</h2>
+                
+                <form id="comicForm">
+                    <div class="form-group">
+                        <label for="topic">What do you want to learn?</label>
+                        <input 
+                            type="text" 
+                            id="topic" 
+                            placeholder="e.g., How to brush teeth, What is AI, How to tie shoes..."
+                            required
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="ageGroup">Age Group:</label>
+                        <select id="ageGroup" required>
+                            <option value="3-5">3-5 years (Simple & Easy)</option>
+                            <option value="6-8" selected>6-8 years (More Detailed)</option>
+                            <option value="9-12">9-12 years (More Information)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="imageStyle">Comic Style:</label>
+                        <select id="imageStyle" required>
+                            <option value="<anime>" selected>Anime Style </option>
+                            <option value="<3d cartoon>">3D Cartoon </option>
+                            <option value="<flat illustration>">Flat Illustration </option>
+                            <option value="<watercolor>">Watercolor </option>
+                            <option value="<sketch>">Sketch </option>
+                            <option value="<auto>">Auto Select </option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" id="generateBtn">
+                        Generate Comic
+                    </button>
+                </form>
+            </div>
+
+            <section class="missions-section" id="missionsSection">
+                <div class="missions-header">
+                    <div>
+                        <p class="section-kicker">Guided paths</p>
+                        <h2>Learning Missions</h2>
+                        <p class="section-subtitle">Choose a mission to unlock curated topics with gentle reminders.</p>
+                    </div>
+                    <button type="button" id="missionNotifyBtn" class="btn ghost">Enable Mission Alerts</button>
+                </div>
+                <div id="missionsList" class="missions-grid"></div>
+            </section>
+
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>AI is creating your comic, please wait...</p>
+            </div>
+            
+            <div id="result" class="result-section hidden">
+                <h2>Your Custom Tutorial Comic</h2>
+                <div id="comicDisplay"></div>
+                <div id="stepsDisplay"></div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="static/js/app.js"></script>
+</body>
+</html>
