@@ -22,6 +22,47 @@ class ComicGenerator:
         self.api_key = Config.DASHSCOPE_API_KEY
         self.image_api_url = Config.DASHSCOPE_IMAGE_API
 
+    def _determine_subject(self, topic, step_desc, step_title):
+        """Determine the main subject for the image based on topic and content"""
+        topic_lower = topic.lower()
+        desc_lower = (step_desc + ' ' + step_title).lower()
+        
+        if 'ai' in topic_lower or 'artificial intelligence' in topic_lower:
+            if 'pattern' in desc_lower or 'puzzle' in desc_lower or 'learn' in desc_lower:
+                return "Friendly educational robot solving a colorful pattern puzzle grid with shapes and numbers"
+            elif 'audio' in desc_lower or 'music' in desc_lower or 'sound' in desc_lower or 'listen' in desc_lower:
+                return "Friendly educational robot wearing headphones, listening to music with audio waveform displayed on screen"
+            elif 'draw' in desc_lower or 'art' in desc_lower or 'create' in desc_lower or 'generate' in desc_lower:
+                return "Friendly educational robot with robotic arm drawing on a sketchpad, creating simple line art"
+            else:
+                return "Friendly educational robot in a learning environment"
+        
+        elif 'body' in topic_lower or 'health' in topic_lower or 'organ' in topic_lower:
+            if 'cell' in desc_lower:
+                return "Colorful diagram showing cells and organs in the human body"
+            elif 'food' in desc_lower or 'energy' in desc_lower or 'eat' in desc_lower:
+                return "Illustration of food being converted to energy in the body, digestive system"
+            elif 'immune' in desc_lower or 'germ' in desc_lower:
+                return "Cartoon immune system cells fighting germs, white blood cells protecting the body"
+            elif 'heal' in desc_lower or 'grow' in desc_lower:
+                return "Illustration showing body healing a cut, cells regenerating and growing"
+            else:
+                return "Educational diagram of the human body"
+        
+        elif 'internet' in topic_lower or 'online' in topic_lower or 'digital' in topic_lower or 'privacy' in topic_lower:
+            if 'connect' in desc_lower or 'network' in desc_lower:
+                return "Illustration of computers connected in a network, data flowing between devices"
+            elif 'data' in desc_lower:
+                return "Visual representation of data packets traveling through the internet"
+            elif 'safe' in desc_lower or 'security' in desc_lower:
+                return "Illustration of online safety concepts, shield protecting computer"
+            elif 'privacy' in desc_lower:
+                return "Visual showing privacy concepts, lock and key protecting personal information"
+            else:
+                return "Educational illustration of internet and technology concepts"
+        
+        return "Educational illustration"
+    
     def _clean_text_for_render(self, text):
         """Strip characters that the default PIL bitmap font cannot render."""
         if not text:
@@ -36,23 +77,23 @@ class ComicGenerator:
         # custom fonts can still attempt to render it.
         return text
     
-    def create_comic(self, steps, comic_id, image_style='<anime>'):
+    def create_comic(self, steps, comic_id, image_style='<anime>', topic=''):
         """Create complete comic"""
         comic_panels = []
         
         for i, step in enumerate(steps):
-            panel_path = self.create_panel_with_ai_image(step, comic_id, i, image_style)
+            panel_path = self.create_panel_with_ai_image(step, comic_id, i, image_style, topic)
             comic_panels.append(panel_path)
         
         # Combine panels to create final comic
         final_comic_path = self.combine_panels(comic_panels, comic_id)
         return final_comic_path
     
-    def create_panel_with_ai_image(self, step, comic_id, panel_index, image_style='<anime>'):
+    def create_panel_with_ai_image(self, step, comic_id, panel_index, image_style='<anime>', topic=''):
         """Create comic panel with AI image using Tongyi Wanxiang"""
         try:
             # Generate image
-            image_path = self.generate_ai_image(step, comic_id, panel_index, image_style)
+            image_path = self.generate_ai_image(step, comic_id, panel_index, image_style, topic)
             
             if image_path and os.path.exists(image_path):
                 # If AI image generation successful, add text to image
@@ -66,8 +107,8 @@ class ComicGenerator:
             # Fallback to original method
             return self.create_panel(step, comic_id, panel_index)
     
-    def generate_ai_image(self, step, comic_id, panel_index, image_style='<anime>'):
-        """Generate image using Tongyi Wanxiang (async mode)"""
+    def generate_ai_image(self, step, comic_id, panel_index, image_style='<anime>', topic=''):
+        """Generate image using Tongyi Wanxiang (async mode) with content-first prompts"""
         try:
             headers = {
                 'Authorization': f'Bearer {self.api_key}',
@@ -75,23 +116,23 @@ class ComicGenerator:
                 'X-DashScope-Async': 'enable'
             }
             
-            # Build English dynamic prompt
-            character_desc = step.get('character_description', 'cute cartoon child with big eyes, casual clothes')
             action_scene = step.get('action_scene', 'performing action with hands')
             step_desc = step.get('description', '')
+            step_title = step.get('title', '')
             
-            # Combine into vivid scene description (all English)
-            prompt = f"{character_desc}, {action_scene}, {step_desc}, bright colors, simple background, child-friendly, safe content, dynamic pose, expressive face, indoor scene"
+            subject = self._determine_subject(topic, step_desc, step_title)
+            
+            prompt = f"{subject}. {action_scene}. {step_desc}. Child-friendly educational illustration, bright colors, clear composition, simple clean background, engaging and informative"
             
             payload = {
                 "model": "wanx-v1",
                 "input": {
                     "prompt": prompt,
-                    "negative_prompt": "violence, adult content, horror, blood, inappropriate for children, static pose, stiff, standing straight, arms at sides, boring"
+                    "negative_prompt": "violence, adult content, horror, blood, inappropriate for children, static pose, stiff, boring, generic child on couch, text overlay, logos, watermarks, blurry"
                 },
                 "parameters": {
-                    "style": image_style,  # Use user-selected style
-                    "size": "1024*1024",  # Square, suitable for comic panels
+                    "style": image_style,
+                    "size": "1024*1024",
                     "n": 1
                 }
             }

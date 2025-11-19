@@ -241,8 +241,13 @@ def generate_comic():
         
         print(f"Generating comic - Topic: {topic}, Age Group: {age_group}, Style: {image_style}")
         
-        # Generate tutorial steps
-        steps = ai_service.generate_tutorial_steps(topic, age_group)
+        user_id = data.get('user_id')
+        character_description = data.get('character_description')
+        if not character_description and user_id:
+            character_description = user_selfie_store.get(user_id, {}).get('character_description')
+        
+        # Generate tutorial steps with optional character description
+        steps = ai_service.generate_tutorial_steps(topic, age_group, character_description)
         
         if not steps:
             return jsonify({'error': 'Unable to generate tutorial steps'}), 500
@@ -250,8 +255,8 @@ def generate_comic():
         # Save to database
         comic_id = db.save_comic(topic, age_group, steps)
         
-        # Generate comic (pass style parameter)
-        comic_path = comic_generator.create_comic(steps, comic_id, image_style)
+        # Generate comic (pass style parameter and topic for content-first prompts)
+        comic_path = comic_generator.create_comic(steps, comic_id, image_style, topic)
         
         # Verify file exists
         if not comic_path or not os.path.exists(comic_path):
