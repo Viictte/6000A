@@ -9,6 +9,11 @@
       {"id": "morning-routine", "title": "Morning Routine Master", "goal": "Build a calm, confident start to the day."},
       {"id": "kindness-cards", "title": "Kindness Cards", "goal": "Practice empathy by designing mini kindness missions."},
       {"id": "community-helper", "title": "Community Helper", "goal": "Learn how to spot needs at home and help out."}
+    ],
+    "unlock_dares": [
+      {"id": "dare-1", "title": "Adventure at the Park", "description": "Parent takes kid to explore a new park or playground", "unlock_after": 3},
+      {"id": "dare-2", "title": "Ice Cream Party", "description": "Parent treats the family to ice cream at favorite shop", "unlock_after": 6},
+      {"id": "dare-3", "title": "Movie Night", "description": "Parent organizes a special movie night with popcorn and snacks", "unlock_after": 9}
     ]
   },
   {
@@ -22,6 +27,12 @@
       {"id": "mission-control", "title": "Mission Control", "goal": "Understand how astronauts prepare for launch."},
       {"id": "gravity-games", "title": "Gravity Games", "goal": "Experiment with gravity at home."},
       {"id": "future-bases", "title": "Future Bases", "goal": "Design your own moon or Mars base."}
+    ],
+    "unlock_dares": [
+      {"id": "dare-4", "title": "Planetarium Visit", "description": "Parent takes kid to visit a planetarium or science museum", "unlock_after": 3},
+      {"id": "dare-5", "title": "Stargazing Night", "description": "Parent organizes a backyard stargazing session with telescope", "unlock_after": 6},
+      {"id": "dare-6", "title": "Space Movie Marathon", "description": "Parent hosts a space-themed movie marathon with astronaut snacks", "unlock_after": 9},
+      {"id": "dare-7", "title": "Build a Rocket", "description": "Parent helps kid build and launch a model rocket together", "unlock_after": 12}
     ]
   },
   {
@@ -35,6 +46,12 @@
       {"id": "hero-lab", "title": "Hero Lab", "goal": "Develop characters with strengths, flaws, and sidekicks."},
       {"id": "panel-pacing", "title": "Panel Pacing", "goal": "Plan exciting panels and cliffhangers."},
       {"id": "final-showcase", "title": "Final Showcase", "goal": "Publish a mini comic or zine."}
+    ],
+    "unlock_dares": [
+      {"id": "dare-8", "title": "Bookstore Adventure", "description": "Parent takes kid to bookstore and lets them pick 3 new books", "unlock_after": 3},
+      {"id": "dare-9", "title": "Comic Convention", "description": "Parent takes kid to a local comic convention or book fair", "unlock_after": 6},
+      {"id": "dare-10", "title": "Author Meet & Greet", "description": "Parent arranges visit to library author event or writing workshop", "unlock_after": 9},
+      {"id": "dare-11", "title": "Publishing Party", "description": "Parent hosts a comic showcase party where kid presents their work", "unlock_after": 12}
     ]
   }
 ]

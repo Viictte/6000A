@@ -49,6 +49,26 @@
                         </select>
                     </div>
                     
+                    <div class="form-group selfie-upload-section">
+                        <label for="selfieUpload">Upload Your Selfie (Optional)</label>
+                        <p class="selfie-description">Upload a photo to create a personalized character that looks like you!</p>
+                        <div class="selfie-upload-container">
+                            <input 
+                                type="file" 
+                                id="selfieUpload" 
+                                accept="image/*"
+                                style="display: none;"
+                            >
+                            <button type="button" id="selfieUploadBtn" class="btn-upload">
+                                📸 Choose Photo
+                            </button>
+                            <div id="selfiePreview" class="selfie-preview hidden">
+                                <img id="selfiePreviewImg" src="" alt="Selfie preview">
+                                <button type="button" id="removeSelfieBtn" class="btn-remove">✕</button>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <button type="submit" id="generateBtn">
                         Generate Comic
                     </button>
@@ -62,10 +82,31 @@
                         <h2>Learning Missions</h2>
                         <p class="section-subtitle">Choose a mission to unlock curated topics with gentle reminders.</p>
                     </div>
-                    <button type="button" id="missionNotifyBtn" class="btn ghost">Enable Mission Alerts</button>
+                    <div class="missions-header-actions">
+                        <button type="button" id="missionNotifyBtn" class="btn ghost">Enable Mission Alerts</button>
+                        <button type="button" id="viewNotificationsBtn" class="btn ghost">📧 View Notifications</button>
+                    </div>
                 </div>
                 <div id="missionsList" class="missions-grid"></div>
             </section>
+
+            <div id="notificationModal" class="modal hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Notification Center</h2>
+                        <button type="button" id="closeNotificationModal" class="btn-close">✕</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="notification-tabs">
+                            <button type="button" class="tab-btn active" data-tab="email">Email Notifications</button>
+                            <button type="button" class="tab-btn" data-tab="push">Push Notifications</button>
+                        </div>
+                        <div id="notificationList" class="notification-list">
+                            <p class="notification-empty">No notifications yet. Complete missions to receive updates!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div id="loading" class="loading hidden">
                 <div class="spinner"></div>

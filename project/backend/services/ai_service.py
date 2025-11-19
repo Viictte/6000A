@@ -1,6 +1,7 @@
 import json
 import re
 import requests
+import base64
 from config import Config
 
 
@@ -338,6 +339,68 @@ Only output JSON. Do not include markdown fences.
             scene = scenes_by_step[min(step_index, len(scenes_by_step)-1)]
 
         return scene
+
+    def generate_character_from_selfie(self, image_path):
+        """Generate character description from selfie image using AI vision analysis"""
+        try:
+            with open(image_path, 'rb') as f:
+                image_data = f.read()
+            
+            image_base64 = base64.b64encode(image_data).decode('utf-8')
+            
+            headers = {
+                'Authorization': f'Bearer {self.api_key}',
+                'Content-Type': 'application/json'
+            }
+            
+            prompt = """Analyze this photo and create a child-friendly cartoon character description based on the person's features. 
+Focus on: hair color and style, eye color, skin tone, facial features, and suggested clothing style.
+Keep it appropriate for children's comics. Return a concise description suitable for AI image generation."""
+            
+            payload = {
+                "model": "qwen-vl-plus",
+                "input": {
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "image": f"data:image/jpeg;base64,{image_base64}"
+                                },
+                                {
+                                    "text": prompt
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+            
+            response = requests.post(
+                "https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation",
+                headers=headers,
+                json=payload,
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                if 'output' in result and 'choices' in result['output']:
+                    description = result['output']['choices'][0]['message']['content'][0]['text']
+                    return description
+            
+            print(f"Vision API failed: {response.status_code}, {response.text}")
+            return self._get_default_character_description()
+            
+        except Exception as e:
+            print(f"Character generation from selfie failed: {e}")
+            import traceback
+            traceback.print_exc()
+            return self._get_default_character_description()
+    
+    def _get_default_character_description(self):
+        """Default character description when selfie analysis fails"""
+        return "A cute cartoon child character with big expressive eyes, friendly smile, wearing casual t-shirt and shorts, child-friendly art style"
 
     def _get_fallback_steps(self, topic):
         """Fallback steps in English"""

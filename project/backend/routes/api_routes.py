@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 import copy
 import os
+import base64
+from werkzeug.utils import secure_filename
 from services.ai_service import AIService
 from services.comic_generator import ComicGenerator
 from services.notification_service import NotificationService
@@ -10,7 +12,9 @@ from data.missions_loader import (
     load_missions,
     get_mission_by_id,
     get_topic_by_id,
-    build_progress_payload
+    build_progress_payload,
+    get_unlocked_dares,
+    get_next_dare
 )
 
 api_bp = Blueprint('api', __name__)
@@ -22,6 +26,7 @@ notification_service = NotificationService()
 db = ComicDatabase(Config.DATABASE_URL)
 missions_cache = load_missions()
 mission_progress_store = {}
+user_selfie_store = {}
 
 
 def _get_user_mission_state(user_id, mission_id, create_if_missing=False):
@@ -33,7 +38,8 @@ def _get_user_mission_state(user_id, mission_id, create_if_missing=False):
     if mission_id not in user_store and create_if_missing:
         user_store[mission_id] = {
             'enrolled': True,
-            'completed_topics': []
+            'completed_topics': [],
+            'claimed_dares': []
         }
     return user_store.get(mission_id)
 
@@ -162,6 +168,55 @@ def complete_mission_step():
         'progress': progress_payload
     })
 
+@api_bp.route('/missions/claim-dare', methods=['POST'])
+def claim_dare():
+    data = request.get_json() or {}
+    user_id = data.get('user_id')
+    mission_id = data.get('mission_id')
+    dare_id = data.get('dare_id')
+
+    if not user_id or not mission_id or not dare_id:
+        return _build_error('user_id, mission_id and dare_id are required')
+
+    mission = get_mission_by_id(mission_id)
+    if not mission:
+        return _build_error('Mission not found', 404)
+
+    state = _get_user_mission_state(user_id, mission_id)
+    if not state or not state.get('enrolled'):
+        return _build_error('User is not enrolled in this mission', 403)
+
+    completed_count = len(state.get('completed_topics', []))
+    unlocked_dares = get_unlocked_dares(mission, completed_count)
+    
+    dare = None
+    for d in unlocked_dares:
+        if d.get('id') == dare_id:
+            dare = d
+            break
+    
+    if not dare:
+        return _build_error('Dare not unlocked yet or does not exist', 400)
+
+    if 'claimed_dares' not in state:
+        state['claimed_dares'] = []
+    
+    if dare_id not in state['claimed_dares']:
+        state['claimed_dares'].append(dare_id)
+
+    progress_payload = build_progress_payload(mission, state)
+    notification_service.send_push_notification(
+        user_id, 
+        'Dare Claimed!', 
+        f"Parent must complete: {dare.get('title')}"
+    )
+
+    return jsonify({
+        'mission_id': mission_id,
+        'claimed_dare': dare,
+        'progress': progress_payload
+    })
+
 @api_bp.route('/generate-comic', methods=['POST'])
 def generate_comic():
     """Generate comic API"""
@@ -248,6 +303,78 @@ def get_comic(comic_id):
     except Exception as e:
         print(f"Get comic error: {e}")
         return jsonify({'error': 'An error occurred while retrieving the comic'}), 500
+
+@api_bp.route('/upload-selfie', methods=['POST'])
+def upload_selfie():
+    """Upload selfie and generate character description"""
+    try:
+        if 'selfie' not in request.files:
+            return jsonify({'error': 'No selfie file provided'}), 400
+        
+        file = request.files['selfie']
+        user_id = request.form.get('user_id')
+        
+        if not user_id:
+            return jsonify({'error': 'user_id is required'}), 400
+        
+        if file.filename == '':
+            return jsonify({'error': 'No file selected'}), 400
+        
+        if file:
+            filename = secure_filename(file.filename)
+            backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            project_root = os.path.dirname(backend_dir)
+            upload_dir = os.path.join(project_root, 'frontend', 'static', 'uploads')
+            os.makedirs(upload_dir, exist_ok=True)
+            
+            filepath = os.path.join(upload_dir, f"{user_id}_{filename}")
+            file.save(filepath)
+            
+            character_description = ai_service.generate_character_from_selfie(filepath)
+            
+            user_selfie_store[user_id] = {
+                'filepath': filepath,
+                'character_description': character_description
+            }
+            
+            return jsonify({
+                'success': True,
+                'character_description': character_description,
+                'message': 'Selfie uploaded successfully'
+            })
+    
+    except Exception as e:
+        print(f"Selfie upload error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': 'Failed to upload selfie'}), 500
+
+@api_bp.route('/notifications', methods=['GET'])
+def get_notifications():
+    """Get user notifications"""
+    try:
+        user_id = request.args.get('user_id')
+        notif_type = request.args.get('type', 'email')
+        
+        if not user_id:
+            return jsonify({'error': 'user_id is required'}), 400
+        
+        all_notifications = notification_service.sent_notifications
+        user_notifications = [
+            n for n in all_notifications 
+            if n.get('user_id') == user_id and n.get('type') == notif_type
+        ]
+        
+        user_notifications.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
+        
+        return jsonify({
+            'success': True,
+            'notifications': user_notifications
+        })
+    
+    except Exception as e:
+        print(f"Get notifications error: {e}")
+        return jsonify({'error': 'Failed to retrieve notifications'}), 500
 
 @api_bp.route('/health')
 def health_check():

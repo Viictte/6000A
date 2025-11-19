@@ -7,6 +7,8 @@ class StorySparkApp {
         this.notificationsEnabled = false;
         this.missions = [];
         this.missionProgress = {};
+        this.selfieFile = null;
+        this.selfieCharacterDescription = null;
         this.initializeEventListeners();
         this.initializeNotificationPreferences();
         this.fetchMissions();
@@ -25,6 +27,35 @@ class StorySparkApp {
         if (missionNotifyBtn) {
             missionNotifyBtn.addEventListener('click', () => this.requestBrowserNotifications(true));
         }
+
+        const selfieUploadBtn = document.getElementById('selfieUploadBtn');
+        const selfieUpload = document.getElementById('selfieUpload');
+        const removeSelfieBtn = document.getElementById('removeSelfieBtn');
+
+        if (selfieUploadBtn && selfieUpload) {
+            selfieUploadBtn.addEventListener('click', () => selfieUpload.click());
+            selfieUpload.addEventListener('change', (e) => this.handleSelfieUpload(e));
+        }
+
+        if (removeSelfieBtn) {
+            removeSelfieBtn.addEventListener('click', () => this.removeSelfie());
+        }
+
+        const viewNotificationsBtn = document.getElementById('viewNotificationsBtn');
+        const closeNotificationModal = document.getElementById('closeNotificationModal');
+        
+        if (viewNotificationsBtn) {
+            viewNotificationsBtn.addEventListener('click', () => this.showNotificationModal());
+        }
+        
+        if (closeNotificationModal) {
+            closeNotificationModal.addEventListener('click', () => this.hideNotificationModal());
+        }
+
+        const notificationTabs = document.querySelectorAll('.tab-btn');
+        notificationTabs.forEach(tab => {
+            tab.addEventListener('click', (e) => this.switchNotificationTab(e.target.dataset.tab));
+        });
     }
     
     async handleSubmit(event) {
@@ -435,6 +466,11 @@ class StorySparkApp {
             this.enrollMission(missionId);
         } else if (action === 'complete-step') {
             this.completeNextTopic(missionId);
+        } else if (action === 'claim-dare') {
+            const dareId = actionButton.dataset.dareId;
+            if (dareId) {
+                this.claimDare(missionId, dareId);
+            }
         }
     }
 
@@ -501,6 +537,31 @@ class StorySparkApp {
         const primaryLabel = progress.enrolled ? 'Continue Mission' : 'Start Mission';
         const completeDisabled = !progress.enrolled || !nextTopic || isComplete ? 'disabled' : '';
 
+        const unlockedDares = progress.unlockedDares || [];
+        const claimedDares = progress.claimedDares || [];
+        const nextDare = progress.nextDare;
+        
+        const daresSection = unlockedDares.length > 0 ? `
+            <div class="mission-dares">
+                <h4 class="dare-header">🎉 Parent Dares Unlocked!</h4>
+                <p class="dare-explanation">Complete topics to unlock fun challenges for parents!</p>
+                <ul class="dare-list">
+                    ${unlockedDares.map(dare => {
+                        const isClaimed = claimedDares.includes(dare.id);
+                        return `<li class="dare-item ${isClaimed ? 'claimed' : ''}">
+                            <div class="dare-content">
+                                <strong>${dare.title}</strong>
+                                <p>${dare.description}</p>
+                                <small>Unlocked after ${dare.unlock_after} topics</small>
+                            </div>
+                            ${isClaimed ? '<span class="dare-badge">✅ Claimed!</span>' : 
+                              `<button type="button" class="btn-dare" data-action="claim-dare" data-mission-id="${mission.id}" data-dare-id="${dare.id}">Claim Dare</button>`}
+                        </li>`;
+                    }).join('')}
+                </ul>
+            </div>
+        ` : '';
+
         return `
             <header>
                 <div class="mission-meta">${mission.badge || '🎯'} Ages ${mission.recommended_age}</div>
@@ -515,6 +576,7 @@ class StorySparkApp {
             </div>
             <p class="mission-next-topic">${isComplete ? 'Mission complete!' : nextTopic ? `Next: ${nextTopic.title}` : 'Enroll to unlock topics'}</p>
             <ul class="mission-topics">${topicsList}</ul>
+            ${daresSection}
             <div class="mission-actions">
                 <button type="button" class="btn primary" data-action="enroll" data-mission-id="${mission.id}">${primaryLabel}</button>
                 <button type="button" class="btn ghost" data-action="complete-step" data-mission-id="${mission.id}" ${completeDisabled}>Mark Next Topic Done</button>
@@ -536,6 +598,9 @@ class StorySparkApp {
         }
         const completedCount = local?.completed_count ?? completedTopicIds.length;
         const enrolled = Boolean(local?.enrolled);
+        const unlockedDares = local?.unlocked_dares || [];
+        const claimedDares = local?.claimed_dares || [];
+        const nextDare = local?.next_dare || null;
 
         return {
             enrolled,
@@ -543,7 +608,10 @@ class StorySparkApp {
             totalTopics,
             nextTopic,
             completedTopicIds,
-            isComplete: Boolean(local?.is_complete)
+            isComplete: Boolean(local?.is_complete),
+            unlockedDares,
+            claimedDares,
+            nextDare
         };
     }
 
@@ -619,6 +687,143 @@ class StorySparkApp {
         } catch (error) {
             console.error('Failed to complete mission topic', error);
             alert('Unable to update mission progress.');
+        }
+    }
+
+    async claimDare(missionId, dareId) {
+        try {
+            const response = await fetch(`${this.apiBaseUrl}/missions/claim-dare`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_id: this.userId,
+                    mission_id: missionId,
+                    dare_id: dareId
+                })
+            });
+            if (!response.ok) {
+                throw new Error('Unable to claim dare');
+            }
+            const data = await response.json();
+            this.missionProgress[missionId] = data.progress;
+            this.renderMissions();
+
+            const dare = data.claimed_dare;
+            this.triggerBrowserNotification({
+                title: 'Dare Claimed! 🎉',
+                body: `Parent must complete: ${dare?.title || 'the dare'}`
+            });
+        } catch (error) {
+            console.error('Failed to claim dare', error);
+            alert('Unable to claim dare. Make sure you have unlocked it!');
+        }
+    }
+
+    handleSelfieUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')) {
+            alert('Please upload a valid image file');
+            return;
+        }
+
+        this.selfieFile = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const preview = document.getElementById('selfiePreview');
+            const previewImg = document.getElementById('selfiePreviewImg');
+            previewImg.src = e.target.result;
+            preview.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+
+        this.uploadSelfieToServer(file);
+    }
+
+    removeSelfie() {
+        this.selfieFile = null;
+        this.selfieCharacterDescription = null;
+        const preview = document.getElementById('selfiePreview');
+        const previewImg = document.getElementById('selfiePreviewImg');
+        const selfieUpload = document.getElementById('selfieUpload');
+        
+        preview.classList.add('hidden');
+        previewImg.src = '';
+        selfieUpload.value = '';
+    }
+
+    async uploadSelfieToServer(file) {
+        try {
+            const formData = new FormData();
+            formData.append('selfie', file);
+            formData.append('user_id', this.userId);
+
+            const response = await fetch(`${this.apiBaseUrl}/upload-selfie`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                this.selfieCharacterDescription = data.character_description;
+                console.log('Selfie uploaded successfully:', data);
+            } else {
+                console.error('Failed to upload selfie');
+            }
+        } catch (error) {
+            console.error('Error uploading selfie:', error);
+        }
+    }
+
+    showNotificationModal() {
+        const modal = document.getElementById('notificationModal');
+        modal.classList.remove('hidden');
+        this.loadNotifications();
+    }
+
+    hideNotificationModal() {
+        const modal = document.getElementById('notificationModal');
+        modal.classList.add('hidden');
+    }
+
+    switchNotificationTab(tab) {
+        const tabs = document.querySelectorAll('.tab-btn');
+        tabs.forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+        this.loadNotifications(tab);
+    }
+
+    async loadNotifications(type = 'email') {
+        const notificationList = document.getElementById('notificationList');
+        
+        try {
+            const response = await fetch(`${this.apiBaseUrl}/notifications?user_id=${this.userId}&type=${type}`);
+            if (response.ok) {
+                const data = await response.json();
+                const notifications = data.notifications || [];
+                
+                if (notifications.length === 0) {
+                    notificationList.innerHTML = '<p class="notification-empty">No notifications yet. Complete missions to receive updates!</p>';
+                    return;
+                }
+                
+                notificationList.innerHTML = notifications.map(notif => `
+                    <div class="notification-item ${type}">
+                        <div class="notification-icon">${type === 'email' ? '📧' : '🔔'}</div>
+                        <div class="notification-content">
+                            <h4>${notif.title || notif.subject}</h4>
+                            <p>${notif.body}</p>
+                            <small>${new Date(notif.timestamp).toLocaleString()}</small>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        } catch (error) {
+            console.error('Failed to load notifications:', error);
+            notificationList.innerHTML = '<p class="notification-empty">Failed to load notifications.</p>';
         }
     }
 
