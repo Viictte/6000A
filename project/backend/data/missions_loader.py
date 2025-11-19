@@ -50,12 +50,32 @@ def get_topic_by_id(mission: Dict, topic_id: str) -> Optional[Dict]:
     return None
 
 
+def get_unlocked_dares(mission: Dict, completed_count: int) -> List[Dict]:
+    """Get list of dares that have been unlocked based on completed topics."""
+    unlock_dares = mission.get('unlock_dares', [])
+    unlocked = []
+    for dare in unlock_dares:
+        if completed_count >= dare.get('unlock_after', 0):
+            unlocked.append(dare)
+    return unlocked
+
+
+def get_next_dare(mission: Dict, completed_count: int, claimed_dares: List[str]) -> Optional[Dict]:
+    """Get the next dare that can be claimed."""
+    unlocked_dares = get_unlocked_dares(mission, completed_count)
+    for dare in unlocked_dares:
+        if dare.get('id') not in claimed_dares:
+            return dare
+    return None
+
+
 def build_progress_payload(mission: Dict, state: Dict) -> Dict:
     """Construct a normalized progress payload for API responses."""
     topics = mission.get('topics', [])
     total_topics = len(topics)
     completed_topics = list(state.get('completed_topics', [])) if state else []
     completed_count = len(completed_topics)
+    claimed_dares = list(state.get('claimed_dares', [])) if state else []
 
     next_topic = None
     for topic in topics:
@@ -64,6 +84,9 @@ def build_progress_payload(mission: Dict, state: Dict) -> Dict:
             break
 
     is_complete = total_topics > 0 and completed_count >= total_topics
+    
+    unlocked_dares = get_unlocked_dares(mission, completed_count)
+    next_dare = get_next_dare(mission, completed_count, claimed_dares)
 
     return {
         'mission_id': mission.get('id'),
@@ -72,5 +95,8 @@ def build_progress_payload(mission: Dict, state: Dict) -> Dict:
         'completed_count': completed_count,
         'total_topics': total_topics,
         'next_topic': next_topic,
-        'is_complete': is_complete
+        'is_complete': is_complete,
+        'unlocked_dares': unlocked_dares,
+        'claimed_dares': claimed_dares,
+        'next_dare': next_dare
     }
